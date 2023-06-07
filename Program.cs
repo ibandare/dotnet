@@ -6,26 +6,23 @@ const int Min = 8;
 const int Max = 30;
 
 
-
+ICommandService commandService = new CommandService();
 UserService userService = new UserService();
 
-Console.WriteLine("Player #1 name:");
-User user1 = userService.Register(Console.ReadLine());
+string? name1 = commandService.PromptUserInput("Player #1 name:");
+User user1 = userService.Register(name1);
 
-Console.WriteLine("Player #2 name:");
-User user2 = userService.Register(Console.ReadLine());
+string? name2 = commandService.PromptUserInput("Player #2 name:");
+User user2 = userService.Register(name2);
 
-Console.WriteLine($"Enter the word of {Min}-{Max} letters:");
-
-string? allowedSymbols = Console.ReadLine();
+string? allowedSymbols = commandService.PromptUserInput($"Enter the word of {Min}-{Max} letters:");
 
 while (!(Utils.IsInitialWordValid(allowedSymbols, Min, Max)))
 {
-    Console.WriteLine($"Invalid input. Please enter a word of {Min}-{Max} symbols length containing only letters.");
-    allowedSymbols = Console.ReadLine();
+    allowedSymbols = commandService.PromptUserInput($"Invalid input. Please enter a word of {Min}-{Max} symbols length containing only letters.");
 }
 
-GameService game = new GameService(userService, user1, user2, allowedSymbols);
+GameService game = new(userService, commandService, user1, user2, allowedSymbols);
 
 bool shouldContinue;
 do

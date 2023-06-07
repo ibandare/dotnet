@@ -10,42 +10,39 @@ namespace Dotnet.Service
 {
     internal class UserService
     {
+        private readonly ApplicationContext _context = new ApplicationContext();
+
         public List<User> FindAll()
         {
-            using ApplicationContext db = new();
-            return db.Users.ToList();
+            return _context.Users.ToList();
         }
 
         public User Register(string? name)
         {
-            using ApplicationContext db = new();
-
-            User? user = db.Users.FirstOrDefault(u => u.Name == name);
+            User? user = _context.Users.FirstOrDefault(u => u.Name == name);
 
             if (user == null)
             {
                 user = new();
                 user.Name = name;
-                db.Users.Add(user);
-                db.SaveChanges();
+                _context.Users.Add(user);
+                _context.SaveChanges();
             }
             return user;
         }
 
         public void MakeWinner(User user)
         {
-            using ApplicationContext db = new();
             user.Wins++;
-            db.Users.Update(user);
-            db.SaveChanges();
+            _context.Users.Update(user);
+            _context.SaveChanges();
         }
 
-        internal void MakeLooser(User user)
+        public void MakeLooser(User user)
         {
-            using ApplicationContext db = new();
             user.Losses++;
-            db.Users.Update(user);
-            db.SaveChanges();
+            _context.Users.Update(user);
+            _context.SaveChanges();
         }
     }
 }

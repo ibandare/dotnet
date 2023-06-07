@@ -4,31 +4,33 @@ namespace Dotnet.Service
 {
     internal class GameService
     {
-        private readonly UserService userService;
-        private readonly User user1;
-        private readonly User user2;
-        private readonly string? allowedSymbols;
+        private readonly UserService _userService;
+        private readonly ICommandService _commandService;
+        private readonly User _user1;
+        private readonly User _user2;
+        private readonly string? _allowedSymbols;
         private readonly List<string?> words = new List<string?>();
 
-        public GameService(UserService userService, User user1, User user2, string? allowedSymbols)
+        public GameService(UserService userService, ICommandService commandService, User user1, User user2, string? allowedSymbols)
         {
-            this.userService = userService;
-            this.user1 = user1;
-            this.user2 = user2;
-            this.allowedSymbols = allowedSymbols;
+            this._userService = userService;
+            this._commandService = commandService;
+            this._user1 = user1;
+            this._user2 = user2;
+            this._allowedSymbols = allowedSymbols;
         }
 
         private bool MakeTurn(User user)
         {
             string? input = ReadCommand(user);
-            if (Utils.IsWordValid(allowedSymbols, input))
+            if (Utils.IsWordValid(_allowedSymbols, input))
             {
                 return true;
             }
 
-            userService.MakeLooser(user);
-            User winner = user == user1 ? user2 : user1;
-            userService.MakeWinner(winner);
+            _userService.MakeLooser(user);
+            User winner = user == _user1 ? _user2 : _user1;
+            _userService.MakeWinner(winner);
 
             Console.WriteLine($"{user.Name} has lost the game!");
             return false;
@@ -36,27 +38,27 @@ namespace Dotnet.Service
 
         private string? ReadCommand(User user)
         {
-            string? input = PromptUserInput(user);
+            string? input = _commandService.PromptUserInput($"\n{user.Name}'s word:");
 
             while (input != null && input.StartsWith('/'))
             {
                 switch (input)
                 {
                     case "/show-words":
-                        ShowWords();
+                        _commandService.ShowWords(words);
                         break;
                     case "/score":
-                        DisplayScore(new List<User>() { user1, user2 });
+                        _commandService.DisplayScore(new List<User>() { _user1, _user2 });
                         break;
                     case "/total-score":
-                        List<User> users = userService.FindAll();
-                        DisplayScore(users);
+                        List<User> users = _userService.FindAll();
+                        _commandService.DisplayScore(users);
                         break;
                     default:
                         Console.WriteLine("Unknown command");
                         break;
                 }
-                input = PromptUserInput(user);
+                input = _commandService.PromptUserInput($"\n{user.Name}'s word:");
             }
 
             words.Add(input);
@@ -64,28 +66,9 @@ namespace Dotnet.Service
             return input;
         }
 
-        private static string? PromptUserInput(User user)
-        {
-            Console.WriteLine($"\n{user.Name}'s word:");
-            return Console.ReadLine();
-        }
-
-        private static void DisplayScore(List<User> users)
-        {
-            foreach (User user in users)
-            {
-                Console.WriteLine($"{user.Name} - Wins:{user.Wins}, Losses:{user.Losses}");
-            }
-        }
-
-        private void ShowWords()
-        {
-            Console.WriteLine(string.Join(", ", words));
-        }
-
         public bool PlayRound()
         {
-            return MakeTurn(user1) && MakeTurn(user2);
+            return MakeTurn(_user1) && MakeTurn(_user2);
         }
 
     }

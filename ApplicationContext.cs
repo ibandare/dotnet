@@ -1,5 +1,6 @@
 ﻿using Dotnet.Model;
 using Microsoft.EntityFrameworkCore;
+using System.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +20,7 @@ namespace Dotnet
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=Words;Trusted_Connection=True;");
+            optionsBuilder.UseSqlServer(ConfigurationManager.ConnectionStrings["database"].ConnectionString);
         }
     }
 }
