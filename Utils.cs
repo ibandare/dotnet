@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WordsGame
+namespace Dotnet
 {
     internal class Utils
     {
-        public static bool isInitialWordValid(string? input, int min, int max)
+        public static bool IsInitialWordValid(string? input, int min, int max)
         {
             if (string.IsNullOrEmpty(input))
             {
@@ -29,7 +29,7 @@ namespace WordsGame
         }
 
 
-        public static bool IsWordValid(string allowedSymbols, string? input)
+        public static bool IsWordValid(string? allowedSymbols, string? input)
         {
             if (string.IsNullOrEmpty(input))
             {
@@ -40,27 +40,6 @@ namespace WordsGame
                 return false;
             }
             return true;
-        }
-
-
-
-        public static bool PlayRound(string? allowedSymbols)
-        {
-            Func<string, bool> MakeTurn = user =>
-            {
-                Console.WriteLine($"\n{user}'s word:");
-                string? input = Console.ReadLine();
-                if (IsWordValid(allowedSymbols, input))
-                {
-                    return true;
-                }
-                Console.WriteLine($"{user} has lost the game!");
-                return false;
-                
-            };
-
-            return MakeTurn("User 1") && MakeTurn("User 2");
-
         }
 
     }
